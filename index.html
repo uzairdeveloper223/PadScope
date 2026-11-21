@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#163747" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (() => {
+        let theme = 'system';
+        try { theme = localStorage.getItem('padscope:theme') || 'system'; } catch {}
+        document.documentElement.dataset.theme = theme === 'dark' || theme !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      })();
+    </script>
+    <meta name="description" content="A live 3D controller workbench by Uzair Mughal. Test buttons, analog sticks, touch, motion, rumble, and lights. Open source, with all inputs kept on your device." />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <title>PadScope — Controller workbench</title>
+  </head>
+  <body>
+    <svg class="svg-defs" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <symbol id="i-pad" viewBox="0 0 24 24"><path d="M7 6h10c2.5 0 4 2 4.5 5l1 6c.3 2-2 3-3.5 1.5L16 15H8l-3 3.5C3.5 20 1.2 19 1.5 17l1-6C3 8 4.5 6 7 6Z"/><path d="M5.5 10.5h5m-2.5-2.5v5"/><circle cx="16.5" cy="10" r=".6"/><circle cx="19" cy="12.5" r=".6"/></symbol>
+        <symbol id="i-plug" viewBox="0 0 24 24"><path d="m13 3-3 3m8 2-3 3M8 6l10 10M7 9l-2 2a5 5 0 0 0 7 7l2-2M5 19l-3 3m12-17 5 5"/></symbol>
+        <symbol id="i-github" viewBox="0 0 24 24"><path d="M9 19c-4 1-4-2-6-2m12 5v-4c0-1 .1-1.5-.6-2.2 3.2-.4 6.6-1.5 6.6-7a5.5 5.5 0 0 0-1.5-3.8A5 5 0 0 0 19.4 1s-1.2-.4-4 1.5a13 13 0 0 0-7 0C5.6.6 4.4 1 4.4 1A5 5 0 0 0 4.3 5 5.5 5.5 0 0 0 2.8 9c0 5.5 3.4 6.6 6.6 7-.5.5-.7 1.2-.7 2v4"/></symbol>
+        <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></symbol>
+        <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+        <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+        <symbol id="i-cross" viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18"/></symbol>
+        <symbol id="i-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></symbol>
+        <symbol id="i-square" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14"/></symbol>
+        <symbol id="i-triangle" viewBox="0 0 24 24"><path d="m12 4 9 16H3Z"/></symbol>
+        <symbol id="i-up" viewBox="0 0 24 24"><path d="m6 14 6-6 6 6"/></symbol>
+        <symbol id="i-down" viewBox="0 0 24 24"><path d="m6 10 6 6 6-6"/></symbol>
+        <symbol id="i-left" viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></symbol>
+        <symbol id="i-right" viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></symbol>
+        <symbol id="i-aim" viewBox="0 0 32 32"><path d="M16 2v7m0 14v7M2 16h7m14 0h7"/><circle cx="16" cy="16" r="2"/></symbol>
+      </defs>
+    </svg>
+    <a class="skip-link" href="#workbench">Skip to workbench</a>
+    <header class="site-header">
+      <a class="wordmark" href="#workbench" aria-label="PadScope home"><img class="brand-mark" src="./favicon.svg" alt="" width="33" height="33" />PadScope<span class="version">v1.0</span></a>
+       <nav aria-label="Page sections"><a href="#workbench" class="nav-active">Workbench</a><a href="#target-range">Target range</a><a href="#calibration">Calibration</a><a href="#hardware">Hardware</a></nav>
+      <div class="header-tools"><label class="theme-field" for="theme-select"><span>Theme</span><select id="theme-select" aria-label="Color theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label><a class="source-link" href="https://github.com/uzairdeveloper223/PadScope" target="_blank" rel="noreferrer" aria-label="View PadScope source on GitHub"><svg class="icon"><use href="#i-github"/></svg><span>View source</span></a></div>
+    </header>
+
+    <main>
+      <section id="workbench" aria-labelledby="page-title">
+        <div class="page-heading">
+          <div><h1 id="page-title">Controller workbench<span class="title-dot">.</span></h1><p>Every press, pull, and movement. In view.</p></div>
+          <div class="heading-actions"><button id="demo-button" class="button quiet">Try a preview</button><button id="connect-button" class="button primary"><svg class="icon"><use href="#i-plug"/></svg><span id="connect-label">Connect hardware</span></button><a id="compatibility-button" class="button secondary" href="#connection-help" hidden>Connection help</a></div>
+        </div>
+        <aside id="mobile-guidance" class="platform-guidance" aria-label="Mobile controller support" hidden><strong>Mobile controller view</strong><p id="mobile-guidance-copy">Pair a controller to test supported buttons and sticks, or try the preview. Touchpad, motion, and lightbar tools need desktop Chrome or Edge.</p></aside>
+
+        <div class="device-strip">
+          <div class="device-identity"><span id="connection-dot" class="status-dot"></span><strong id="device-name">Waiting for a controller</strong><span id="device-protocol" class="tag">No input</span></div>
+          <div class="device-meta"><span id="battery-value">Battery —</span><span class="separator"></span><span id="report-rate" class="mono">— Hz</span><label id="device-selector-label" class="sr-only" for="device-selector">Active controller</label><select id="device-selector" aria-labelledby="device-selector-label" hidden></select></div>
+        </div>
+        <div id="connection-hint" class="connection-hint"><svg class="icon"><use href="#i-pad"/></svg><span id="connection-hint-copy">Plug in your controller, then press any button. Connect hardware to enable touch, motion, and lights.</span><a href="#connection-help">Connection help<svg class="icon"><use href="#i-arrow"/></svg></a></div>
+
+        <div class="workspace">
+          <section class="model-panel" aria-labelledby="model-title">
+            <div class="model-top"><h2 id="model-title">PS5 Controller</h2><span id="model-status" class="model-mode"><span class="small-dot"></span>3D view</span></div>
+            <div class="model-appearance"><label for="shell-color">Shell <input type="color" id="shell-color" value="#202226" /><output id="shell-hex" class="mono">#202226</output></label><div role="group" aria-label="Model shell presets"><button class="finish-button selected" data-shell="#202226" aria-pressed="true">Black</button><button class="finish-button" data-shell="#e9edf0" aria-pressed="false">White</button></div><span>Model only</span></div>
+            <div id="model-stage" class="model-stage" role="img" aria-label="Interactive PS5 Controller model. Drag to rotate; scroll to zoom. Button input is also shown in the button strip below.">
+              <div id="model-loading" class="model-loading">Loading artist-made model…</div>
+            </div>
+            <div class="model-bottom"><span id="model-gestures">Drag to rotate · Scroll to zoom</span><div class="view-actions" role="group" aria-label="Model view"><button class="view-button selected" data-view="front" aria-pressed="true">Front</button><button class="view-button" data-view="perspective" aria-pressed="false">Perspective</button><button id="reset-view" class="icon-button" aria-label="Reset model view" title="Reset view"><svg class="icon"><use href="#i-reset"/></svg></button><button id="fullscreen-button" class="icon-button" aria-label="Expand controller view" title="Expand view"><svg class="icon"><use href="#i-expand"/></svg></button></div></div>
+          </section>
+
+          <section class="analog-panel" aria-labelledby="analog-title">
+            <div class="section-top"><h2 id="analog-title">Analog inputs</h2><label class="inline-check"><input type="checkbox" id="trails-toggle" checked />Show trails</label></div>
+            <div class="stick-pair">
+              <div class="stick-reading left-series"><div class="stick-heading"><span class="series-dot"></span><h3>Left stick</h3><span id="left-drift" class="drift-label">Drift —</span></div><canvas id="left-plot" class="stick-plot" aria-label="Left stick X and Y position, with raw input and calibrated position"></canvas><div class="axis-values"><span>X <output id="lx">—</output></span><span>Y <output id="ly">—</output></span></div><div class="raw-values">Raw <span id="left-raw" class="mono">— / —</span></div></div>
+              <div class="stick-reading right-series"><div class="stick-heading"><span class="series-dot"></span><h3>Right stick</h3><span id="right-drift" class="drift-label">Drift —</span></div><canvas id="right-plot" class="stick-plot" aria-label="Right stick X and Y position, with raw input and calibrated position"></canvas><div class="axis-values"><span>X <output id="rx">—</output></span><span>Y <output id="ry">—</output></span></div><div class="raw-values">Raw <span id="right-raw" class="mono">— / —</span></div></div>
+            </div>
+            <div class="plot-legend"><span><i class="legend-filled"></i>Calibrated</span><span><i class="legend-ring"></i>Raw input</span><span><i class="legend-zone"></i>Deadzone</span></div>
+            <div class="trigger-pair"><div class="trigger-reading left-series"><div><h3>L2 trigger</h3><output id="l2-value">—</output></div><meter id="l2-meter" min="0" max="1" value="0" aria-label="L2 trigger pressure"></meter></div><div class="trigger-reading right-series"><div><h3>R2 trigger</h3><output id="r2-value">—</output></div><meter id="r2-meter" min="0" max="1" value="0" aria-label="R2 trigger pressure"></meter></div></div>
+          </section>
+
+          <section class="button-panel" aria-labelledby="buttons-title"><div class="button-strip-title"><h2 id="buttons-title">Buttons</h2><span id="button-coverage" class="mono">0 tested</span></div><div id="button-readings" class="button-readings"></div><button id="clear-session" class="icon-button" aria-label="Clear button test history" title="Clear test history"><svg class="icon"><use href="#i-reset"/></svg></button></section>
+        </div>
+        <div class="workspace-caption"><span><span class="status-dot local"></span>Inputs stay on your device</span><span id="input-summary">Gamepad input · Hardware features via WebHID</span></div>
+      </section>
+
+      <section id="target-range" class="range-section" aria-labelledby="range-title">
+        <div class="range-heading"><div><h2 id="range-title">Take it to the range</h2><p>One minute. Five moving targets. Aim with a stick or turn your controller into a gyro gun.</p></div><button id="range-toggle" class="button secondary" aria-expanded="false" aria-controls="range-body">Open target range</button></div>
+        <div id="range-body" hidden>
+          <div class="range-layout">
+            <div id="range-playfield" class="range-playfield">
+              <div class="range-scoreboard" aria-label="Round measurements" aria-live="off"><span>Time <output id="range-time">60s</output></span><span>Score <output id="range-score">0</output></span><span>Accuracy <output id="range-accuracy">0%</output></span><span>Hits / shots <output id="range-hits">0/0</output></span><span>Streak <output id="range-streak">0</output></span><span id="range-input-tag" class="tag">Pointer / keyboard</span></div>
+              <div class="range-actions"><button id="range-start" class="button primary" disabled>Start 60-second round</button><button id="range-pause" class="button secondary" disabled>Pause</button><button id="range-center" class="button secondary" disabled>Center aim</button><button id="range-fullscreen" class="icon-button" aria-label="Expand target range" title="Expand range"><svg class="icon"><use href="#i-expand"/></svg></button></div>
+              <div id="range-stage" class="range-stage" tabindex="0" role="group" aria-label="3D target range" aria-describedby="range-keyboard-help range-aim-help">
+                <p id="range-loading" class="range-loading" role="status">Open the range to load targets.</p>
+                <div id="range-reticle" class="range-reticle" aria-hidden="true" hidden><svg viewBox="0 0 32 32"><use class="range-reticle-outline" href="#i-aim"/><use href="#i-aim"/></svg></div>
+                <div id="range-overlay" class="range-overlay" hidden><h3 id="range-overlay-title">A minute on target.</h3><p id="range-overlay-copy">Five moving targets. Small targets and bullseyes earn more.</p></div>
+                <p id="range-edge-hint" class="range-edge-hint" hidden>Aim back toward the screen, or center your grip.</p>
+                <span id="range-shot-feedback" class="range-shot-feedback" role="status"></span>
+                <span class="range-replica-label">PS5 Controller · live mapping</span>
+              </div>
+              <div class="range-bottom"><p id="range-keyboard-help">Click or tap to fire. Keyboard: arrows / WASD to aim, Space to fire, C to center, P to pause. Focus the range first.</p><button id="range-fire" class="button primary" disabled>Fire</button></div>
+            </div>
+            <aside class="range-controls" aria-label="Target range controls">
+              <h3>Aiming &amp; controls</h3>
+              <fieldset id="range-settings"><legend class="sr-only">Range settings, available while paused</legend>
+                <label class="range-select-field" for="range-mode">Aiming mode<select id="range-mode"><option value="stick">Joystick aiming</option><option id="range-gyro-option" value="gyro" disabled>Gyro gun · right-hand grip</option></select></label>
+                <label class="range-select-field" for="range-weapon">Blaster<select id="range-weapon"><option value="compact">Compact · Blaster A</option><option value="carbine">Carbine · Blaster P</option><option value="longshot">Longshot · Blaster E</option></select></label>
+                <label id="range-stick-field" class="range-select-field" for="range-stick">Aim stick<select id="range-stick"><option value="right">Right stick</option><option value="left">Left stick</option></select></label>
+                <div class="range-field"><label for="range-sensitivity">Aim sensitivity<output id="range-sensitivity-value" for="range-sensitivity">1.00×</output></label><input id="range-sensitivity" type="range" min="40" max="250" step="5" value="100" /></div>
+                <div class="range-invert"><label class="inline-check"><input id="range-invert-x" type="checkbox" />Invert horizontal</label><label class="inline-check"><input id="range-invert-y" type="checkbox" />Invert vertical</label></div>
+                <div class="range-mappings"><h3>Button mapping</h3><div><label for="range-map-fire">Fire</label><select id="range-map-fire" data-binding="fire"></select><button class="button secondary" data-bind="fire" aria-label="Bind a controller press to Fire" aria-pressed="false">Bind press</button></div><div><label for="range-map-recenter">Center</label><select id="range-map-recenter" data-binding="recenter"></select><button class="button secondary" data-bind="recenter" aria-label="Bind a controller press to Center" aria-pressed="false">Bind press</button></div><div><label for="range-map-pause">Pause</label><select id="range-map-pause" data-binding="pause"></select><button class="button secondary" data-bind="pause" aria-label="Bind a controller press to Pause" aria-pressed="false">Bind press</button></div></div>
+                <button id="range-reset-settings" class="text-button">Reset range controls</button>
+              </fieldset>
+              <div class="audio-controls" role="group" aria-labelledby="range-audio-title">
+                <h3 id="range-audio-title">Audio</h3>
+                <label class="inline-check"><input id="range-music" type="checkbox" checked />Background music</label>
+                <div class="range-field"><label for="range-music-volume">Music volume<output id="range-music-volume-value" for="range-music-volume">24%</output></label><input id="range-music-volume" type="range" min="0" max="100" value="24" /></div>
+                <label class="inline-check"><input id="range-sfx" type="checkbox" checked />Sound effects</label>
+                <div class="range-field"><label for="range-effects-volume">Effects volume<output id="range-effects-volume-value" for="range-effects-volume">45%</output></label><input id="range-effects-volume" type="range" min="0" max="100" value="45" /></div>
+                <p id="range-audio-status" class="audio-status" role="status">Open the range to enable audio.</p>
+              </div>
+              <p id="range-aim-help" class="range-aim-help">Use the right stick, pointer, or arrow keys to aim.</p>
+              <div id="range-grip-help" class="range-grip-help" hidden><h3>The gyro-gun grip</h3><svg viewBox="0 0 240 90" role="img" aria-label="Hold the controller sideways in your right hand, pointing the left handle at the screen"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-pad" x="24" y="8" width="76" height="76" transform="rotate(-80 62 46)"/><path d="M113 45h45m-7-6 7 6-7 6"/><rect x="180" y="12" width="44" height="62" rx="3"/><path d="M188 69h28"/></g></svg><p>Hold the controller in your <strong>right hand</strong>. Turn it sideways so the <strong>left handle points toward the center of the screen</strong>. Keep still, then select <strong>Center grip</strong>. Move that handle to aim.</p><p>Grip centering is session-only. Recenter after changing your grip. Gyro yaw has no compass reference.</p></div>
+              <p id="range-binding-help" class="range-binding-help">Button mappings are saved in this browser.</p>
+            </aside>
+          </div>
+          <p id="range-message" class="range-message" role="status">Open the range, choose your controls, and start a round. Pause to change settings.</p>
+          <p class="range-credits">Targets, blasters &amp; crates: <a href="https://kenney.nl/assets/blaster-kit" target="_blank" rel="noreferrer">Kenney · Blaster Kit</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noreferrer">CC0</a>. Controller: <a href="https://sketchfab.com/3d-models/ps5-controller-b7bb9c5102a04cb0b1966c6d02bad7d6" target="_blank" rel="noreferrer">Taohid Animation</a>, CC BY 4.0. <a href="./models/range/ATTRIBUTION.md" target="_blank" rel="noreferrer">Asset credits &amp; licenses</a>.</p>
+          <p class="range-credits">“<a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN2100030&amp;Search=Search" target="_blank" rel="noreferrer">Space Jazz</a>” by Kevin MacLeod (incompetech.com), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Effects: <a href="https://kenney.nl/assets/sci-fi-sounds" target="_blank" rel="noreferrer">Kenney · Sci-fi Sounds</a>, CC0. Re-encoded for the web. <a href="./audio/ATTRIBUTION.md" target="_blank" rel="noreferrer">Audio credits &amp; licenses</a>.</p>
+        </div>
+      </section>
+
+      <section id="blaster-inspection" class="range-section" aria-labelledby="inspect-title">
+        <div class="range-heading"><div><h2 id="inspect-title">Blaster in hand</h2><p>Use your controller as a stand-in blaster. Center your grip, then turn it to inspect every side.</p></div><button id="inspect-toggle" class="button secondary" aria-expanded="false" aria-controls="inspect-body">Open blaster inspection</button></div>
+        <div id="inspect-body" hidden>
+          <div class="range-layout">
+            <div id="inspect-playfield" class="range-playfield">
+              <div class="range-scoreboard"><span>Turn from center <output id="inspect-turn">—</output></span><span id="inspect-status" class="tag" role="status">Live motion required</span></div>
+              <div class="range-actions"><button id="inspect-center" class="button primary" disabled>Center grip</button><button id="inspect-freeze" class="button secondary" aria-pressed="false" disabled>Freeze pose</button><button id="inspect-fullscreen" class="icon-button" aria-label="Expand blaster inspection" title="Expand inspection"><svg class="icon"><use href="#i-expand"/></svg></button></div>
+              <div id="inspect-stage" class="range-stage inspection-stage" tabindex="0" role="group" aria-label="3D blaster inspection" aria-describedby="inspect-keyboard-help inspect-grip-copy">
+                <p id="inspect-loading" class="range-loading" role="status">Open inspection to load blasters.</p>
+                <div id="inspect-overlay" class="range-overlay" hidden><h3 id="inspect-overlay-title">Connect live motion</h3><p id="inspect-overlay-copy">Connect hardware, then center your grip to start live inspection.</p></div>
+              </div>
+              <div class="range-bottom"><p id="inspect-keyboard-help">Full rotation, no targets or timer. C centers and F freezes when this view is focused. Tracks rotation, not position.</p></div>
+            </div>
+            <aside class="range-controls inspection-controls" aria-label="Blaster inspection controls">
+              <h3>Inspect your blaster</h3>
+              <fieldset id="inspect-settings"><legend class="sr-only">Blaster inspection settings</legend>
+                <label class="range-select-field" for="inspect-weapon">Blaster<select id="inspect-weapon"><option value="compact">Compact · Blaster A</option><option value="carbine">Carbine · Blaster P</option><option value="longshot">Longshot · Blaster E</option></select></label>
+                <div class="range-field"><label for="inspect-zoom">Model zoom<output id="inspect-zoom-value" for="inspect-zoom">100%</output></label><input id="inspect-zoom" type="range" min="70" max="160" step="5" value="100" /></div>
+                <label class="range-select-field" for="inspect-map-center">Center control<select id="inspect-map-center"></select></label>
+                <label class="range-select-field" for="inspect-map-freeze">Freeze / resume control<select id="inspect-map-freeze"></select></label>
+              </fieldset>
+              <div class="audio-controls" role="group" aria-labelledby="inspect-audio-title">
+                <h3 id="inspect-audio-title">Audio</h3>
+                <label class="inline-check"><input id="inspect-music" type="checkbox" checked />Background music</label>
+                <div class="range-field"><label for="inspect-music-volume">Music volume<output id="inspect-music-volume-value" for="inspect-music-volume">24%</output></label><input id="inspect-music-volume" type="range" min="0" max="100" value="24" /></div>
+                <p id="inspect-audio-status" class="audio-status" role="status">Open inspection to enable audio.</p>
+              </div>
+              <div class="range-grip-help inspection-grip-help"><h3>Center first, then turn</h3><svg viewBox="0 0 240 90" role="img" aria-label="Hold the controller sideways in your right hand, with the left handle pointing at the screen"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><use href="#i-pad" x="24" y="8" width="76" height="76" transform="rotate(-80 62 46)"/><path d="M113 45h45m-7-6 7 6-7 6"/><rect x="180" y="12" width="44" height="62" rx="3"/><path d="M188 69h28"/></g></svg><p id="inspect-grip-copy">Hold it in your <strong>right hand</strong>, with the <strong>left handle pointing toward the screen</strong>. Keep still and select <strong>Center grip</strong>. The blaster's barrel now points into the screen. Turn, tilt, or roll your controller to see the matching blaster angle.</p><p><strong>Freeze pose</strong> holds the model while you examine it. Center again after changing grip. Inspection has its own session-only center, independent of the target range.</p></div>
+            </aside>
+          </div>
+          <p id="inspect-message" class="range-message" role="status">Choose a blaster and center your grip to begin. Blaster, zoom, and control choices are remembered in this browser.</p>
+          <p class="range-credits">Blasters: <a href="https://kenney.nl/assets/blaster-kit" target="_blank" rel="noreferrer">Kenney · Blaster Kit</a>, <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noreferrer">CC0</a>. <a href="./models/range/ATTRIBUTION.md" target="_blank" rel="noreferrer">Asset credits &amp; licenses</a>.</p>
+          <p class="range-credits">“<a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1600018&amp;Search=Search" target="_blank" rel="noreferrer">Floating Cities</a>” by Kevin MacLeod (incompetech.com), <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Re-encoded for the web. <a href="./audio/ATTRIBUTION.md" target="_blank" rel="noreferrer">Audio credits &amp; licenses</a>.</p>
+        </div>
+      </section>
+
+      <div class="tools-grid">
+        <section id="calibration" class="calibration-tool" aria-labelledby="calibration-title">
+          <div class="section-top"><h2 id="calibration-title">Make it your baseline</h2><span id="calibration-tag" class="tag">Local calibration</span></div>
+          <p class="section-description">Set the center, filter small movements, and line up the model.</p>
+          <div class="calibration-row"><div><h3>Stick centers</h3><p>Release both sticks and keep the controller still.</p></div><button id="calibrate-sticks" class="button secondary" disabled>Calibrate centers<svg class="icon"><use href="#i-arrow"/></svg></button></div>
+          <div class="range-field"><label for="deadzone">Radial deadzone<output id="deadzone-value" for="deadzone" class="mono">5%</output></label><input id="deadzone" type="range" min="0" max="30" value="5" step="1" /><div class="range-labels"><span>0%</span><span>30%</span></div></div>
+          <div class="calibration-row motion-row"><div><h3>Motion zero</h3><p>Hold your resting pose for one second.</p></div><button id="zero-motion" class="button secondary" disabled>Zero motion<svg class="icon"><use href="#i-arrow"/></svg></button></div>
+            <div class="tool-footnote"><span id="calibration-status" role="status">Stick centers and gyro bias saved in this browser. Motion pose starts centered each connection.</span><button id="reset-calibration" class="text-button">Reset</button></div>
+        </section>
+
+        <section id="hardware" class="hardware-tool" aria-labelledby="hardware-title">
+          <div class="section-top"><h2 id="hardware-title">Feel the feedback</h2><span id="rumble-tag" class="tag">Connect a controller</span></div>
+          <p class="section-description">Test the two rumble motors independently or together.</p>
+          <div class="range-field"><label for="strong-motor">Strong motor <span class="field-aside">Low frequency</span><output id="strong-value" class="mono">50%</output></label><input id="strong-motor" type="range" min="0" max="100" value="50" /></div>
+          <div class="range-field"><label for="weak-motor">Weak motor <span class="field-aside">High frequency</span><output id="weak-value" class="mono">50%</output></label><input id="weak-motor" type="range" min="0" max="100" value="50" /></div>
+          <div class="rumble-actions"><label class="duration-field" for="rumble-duration">Duration<select id="rumble-duration"><option value="300">0.3 seconds</option><option value="1000" selected>1 second</option><option value="2000">2 seconds</option></select></label><button id="test-rumble" class="button primary" disabled>Test rumble</button><button id="stop-rumble" class="button secondary" disabled>Stop</button></div>
+          <p id="rumble-status" class="tool-footnote" role="status">Available through Gamepad haptics or a compatible HID report.</p>
+        </section>
+      </div>
+
+      <div class="sensors-grid">
+        <section class="touch-tool" aria-labelledby="touch-title"><div class="section-top"><h2 id="touch-title">Touch surface</h2><span id="touch-tag" class="tag">WebHID required</span></div><p class="section-description">Two contacts. Position and click, in real time.</p><div class="touch-surface" id="touch-surface"><div class="touch-crosshair"></div><span id="touch-placeholder">Connect hardware, then touch the pad</span><span id="touch-0" class="touch-contact" hidden>1</span><span id="touch-1" class="touch-contact second" hidden>2</span><span class="touch-corner">0, 0</span></div><div class="contact-readings"><span>Contact 1 <output id="touch-value-0">—</output></span><span>Contact 2 <output id="touch-value-1">—</output></span></div></section>
+        <section class="motion-tool" aria-labelledby="motion-title"><div class="section-top"><h2 id="motion-title">Motion sensors</h2><label class="inline-check"><input type="checkbox" id="follow-motion" checked />Follow motion</label></div><p class="section-description" id="motion-description">Connect hardware to bring the model into your hands.</p><table class="sensor-table"><thead><tr><th scope="col">Sensor</th><th scope="col">X</th><th scope="col">Y</th><th scope="col">Z</th></tr></thead><tbody><tr><th scope="row">Gyroscope<span>°/s</span></th><td id="gyro-x">—</td><td id="gyro-y">—</td><td id="gyro-z">—</td></tr><tr><th scope="row">Acceleration<span>g</span></th><td id="accel-x">—</td><td id="accel-y">—</td><td id="accel-z">—</td></tr></tbody></table><div class="motion-status-line"><span id="motion-tag" class="tag">Waiting for sensor data</span><span>Yaw may drift; zero to recenter.</span></div></section>
+        <section class="light-tool" aria-labelledby="light-title"><div class="section-top"><h2 id="light-title">A little color</h2><span id="light-tag" class="tag">Model preview</span></div><p class="section-description">Pick a lightbar color. Try it on your controller.</p><div class="color-controls"><label for="light-color" class="color-picker-label"><input type="color" id="light-color" value="#408cff" /><span id="color-hex" class="mono">#408CFF</span><span>Lightbar color</span></label><div class="color-presets" aria-label="Lightbar color presets"><button class="color-swatch selected" data-color="#408cff" style="--swatch:#408cff" aria-label="Blue lightbar" aria-pressed="true"></button><button class="color-swatch" data-color="#36c99b" style="--swatch:#36c99b" aria-label="Green lightbar" aria-pressed="false"></button><button class="color-swatch" data-color="#ff885d" style="--swatch:#ff885d" aria-label="Orange lightbar" aria-pressed="false"></button><button class="color-swatch" data-color="#c688ed" style="--swatch:#c688ed" aria-label="Purple lightbar" aria-pressed="false"></button><button class="color-swatch" data-color="#ffffff" style="--swatch:#ffffff" aria-label="White lightbar" aria-pressed="false"></button></div></div><button id="apply-color" class="button secondary" disabled>Apply to controller<svg class="icon"><use href="#i-arrow"/></svg></button><p id="light-status" class="tool-footnote" role="status">The model previews your selection. LED color is not reported by the device.</p></section>
+      </div>
+
+      <section class="session-section" aria-labelledby="session-title"><div class="session-heading"><div><h2 id="session-title">The input trail</h2><p>Recent presses from this session.</p></div><button id="export-report" class="button secondary"><svg class="icon"><use href="#i-download"/></svg>Export report</button></div><div id="event-log" class="event-log"><span class="log-empty">Press a button to start your input trail.</span></div></section>
+
+      <section id="connection-help" class="help-section" aria-labelledby="help-title">
+        <div class="help-intro"><h2 id="help-title">Know your controller.</h2><p>Test buttons, sticks, touch, motion, vibration, and lights in one workspace.</p></div>
+        <div class="help-details">
+          <details><summary>How do I connect?</summary><p>Use a data-capable USB cable or pair over Bluetooth. Press any controller button while this page is focused. Buttons and sticks work through the Gamepad API. In desktop Chrome or Edge, select <strong>Connect hardware</strong> and choose your controller to enable compatible touch, motion, lightbar, and HID rumble reports.</p><p id="platform-help">Connection instructions adapt to your operating system and browser.</p><p id="linux-help" hidden>Opening HID may require permission for <code>/dev/hidraw*</code>. See the <a href="https://github.com/uzairdeveloper223/PadScope#linux-hid-permissions" target="_blank" rel="noreferrer">Linux setup in the README</a>.</p></details>
+          <details><summary>What works on my controller?</summary><p>PS5 DualSense, DualShock 4, and compatible controllers work for buttons and sticks. Touch, motion, vibration, and lights depend on the features your controller and browser expose. Connect hardware for supported USB and Bluetooth features.</p><p>Adaptive-trigger effects and microphone controls are not included. The PS button may be intercepted by your operating system.</p></details>
+          <details><summary>What does calibration change?</summary><p>Stick centers and radial deadzone affect the calibrated readings and model in PadScope. Motion zero samples the gyroscope bias and captures your resting pose. Stick centers and gyro bias are saved locally; the model starts centered each connection. These settings do not change controller firmware. Raw input remains available.</p></details>
+          <details><summary>Where is the model from?</summary><p><a href="https://sketchfab.com/3d-models/ps5-controller-b7bb9c5102a04cb0b1966c6d02bad7d6" target="_blank" rel="noreferrer">PS5 Controller by Taohid Animation</a>, under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. The artist's geometry is prepared into named moving controls. PadScope adds input animation, touch and symbol overlays, shell colors, lighting, and selected-color visualization. <a href="./models/ATTRIBUTION.md" target="_blank" rel="noreferrer">Full model attribution</a>.</p></details>
+        </div>
+      </section>
+    </main>
+
+     <footer class="site-footer"><div><a href="#workbench" class="footer-brand">PadScope</a><span>Built by <a href="https://github.com/uzairdeveloper223" target="_blank" rel="noreferrer">Uzair Mughal</a></span></div><div><span>MIT code · CC BY 4.0 models / music · CC0 range assets / effects</span><a href="https://github.com/uzairdeveloper223/PadScope" target="_blank" rel="noreferrer"><svg class="icon"><use href="#i-github"/></svg>uzairdeveloper223/PadScope</a></div></footer>
+    <div id="notice" class="notice" role="status" hidden></div>
+    <noscript><p class="noscript-note">PadScope needs JavaScript to read controller inputs and display the 3D model.</p></noscript>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
