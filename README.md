@@ -2,6 +2,8 @@
 
 # PadScope
 
+**[Open PadScope →](https://uzairdeveloper223.github.io/PadScope/)**
+
 A browser-based controller workbench. See live input on an artist-made PS5 Controller model, check your sticks and sensors, and use the same controller for target practice or hands-on blaster inspection.
 
 Built with TypeScript, Three.js, and Vite. Controller readings and preferences stay on your device; the application has no backend or analytics.
