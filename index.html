@@ -41,7 +41,7 @@
     <a class="skip-link" href="#workbench">Skip to workbench</a>
     <header class="site-header">
       <a class="wordmark" href="#workbench" aria-label="PadScope home"><img class="brand-mark" src="./favicon.svg" alt="" width="33" height="33" />PadScope<span class="version">v1.0</span></a>
-       <nav aria-label="Page sections"><a href="#workbench" class="nav-active">Workbench</a><a href="#target-range">Target range</a><a href="#calibration">Calibration</a><a href="#hardware">Hardware</a></nav>
+      <nav aria-label="Page sections"><a href="#workbench" class="nav-active">Workbench</a><a href="#health-check">Controller check</a><a href="#target-range">Target range</a><a href="#calibration">Calibration</a><a href="#hardware">Hardware</a></nav>
       <div class="header-tools"><label class="theme-field" for="theme-select"><span>Theme</span><select id="theme-select" aria-label="Color theme"><option value="system">System</option><option value="light">Light</option><option value="dark">Dark</option></select></label><a class="source-link" href="https://github.com/uzairdeveloper223/PadScope" target="_blank" rel="noreferrer" aria-label="View PadScope source on GitHub"><svg class="icon"><use href="#i-github"/></svg><span>View source</span></a></div>
     </header>
 
@@ -49,7 +49,7 @@
       <section id="workbench" aria-labelledby="page-title">
         <div class="page-heading">
           <div><h1 id="page-title">Controller workbench<span class="title-dot">.</span></h1><p>Every press, pull, and movement. In view.</p></div>
-          <div class="heading-actions"><button id="demo-button" class="button quiet">Try a preview</button><button id="connect-button" class="button primary"><svg class="icon"><use href="#i-plug"/></svg><span id="connect-label">Connect hardware</span></button><a id="compatibility-button" class="button secondary" href="#connection-help" hidden>Connection help</a></div>
+          <div class="heading-actions"><button id="demo-button" class="button quiet">Try a preview</button><a class="button secondary" href="#health-check">Check controller</a><button id="connect-button" class="button primary"><svg class="icon"><use href="#i-plug"/></svg><span id="connect-label">Connect hardware</span></button><a id="compatibility-button" class="button secondary" href="#connection-help" hidden>Connection help</a></div>
         </div>
         <aside id="mobile-guidance" class="platform-guidance" aria-label="Mobile controller support" hidden><strong>Mobile controller view</strong><p id="mobile-guidance-copy">Pair a controller to test supported buttons and sticks, or try the preview. Touchpad, motion, and lightbar tools need desktop Chrome or Edge.</p></aside>
 
@@ -82,6 +82,40 @@
           <section class="button-panel" aria-labelledby="buttons-title"><div class="button-strip-title"><h2 id="buttons-title">Buttons</h2><span id="button-coverage" class="mono">0 tested</span></div><div id="button-readings" class="button-readings"></div><button id="clear-session" class="icon-button" aria-label="Clear button test history" title="Clear test history"><svg class="icon"><use href="#i-reset"/></svg></button></section>
         </div>
         <div class="workspace-caption"><span><span class="status-dot local"></span>Inputs stay on your device</span><span id="input-summary">Gamepad input · Hardware features via WebHID</span></div>
+      </section>
+
+      <section id="health-check" class="health-section range-section" aria-labelledby="health-title">
+        <div class="range-heading"><div><h2 id="health-title">Check your controller</h2><p>Follow a short test. Measure resting movement, stick range, trigger travel, and button presses. Keep a report to compare later.</p></div><button id="health-toggle" class="button secondary" aria-expanded="false" aria-controls="health-body">Open controller check</button></div>
+        <div id="health-body" hidden>
+          <div class="health-conditions"><p id="health-device">Connect a controller and press a button to begin.</p><span id="health-source" class="tag">Live input required</span></div>
+          <div class="health-setup"><label for="health-connection">Connection<select id="health-connection"><option value="not recorded">Not recorded</option><option value="usb">USB</option><option value="bluetooth">Bluetooth</option><option value="wireless receiver">Wireless receiver</option></select></label><label for="health-notes">Test notes <span>Optional · firmware, profile, or the problem you noticed</span><textarea id="health-notes" maxlength="1500" rows="2" placeholder="For example: right stick moves the camera with my thumb off it."></textarea></label></div>
+          <div class="health-layout">
+            <ol id="health-steps" class="health-steps" aria-label="Controller check steps"><li data-step="prepare">Warm up inputs<span>Move both sticks, then release</span></li><li data-step="rest">Hands off<span>Five seconds at rest</span></li><li data-step="sweep">Sweep the edges<span>Every direction, both sticks</span></li><li data-step="triggers">Pull the triggers<span>Release, pull fully, release</span></li><li data-step="buttons">Press and release<span>Each exposed button</span></li></ol>
+            <div class="health-current">
+              <div class="section-top"><h3 id="health-step-title">Ready when you are</h3><button id="health-start" class="button primary" disabled>Start check</button></div>
+              <p id="health-instruction" class="health-instruction">Use a live controller. The check records input before PadScope's center correction and deadzone.</p>
+              <div class="health-progress"><progress id="health-progress" max="1" value="0" aria-label="Hands-off capture progress"></progress><output id="health-progress-label">Five guided steps</output></div>
+              <div class="health-plots">
+                <figure class="left-series"><figcaption id="health-left-label">Left stick</figcaption><svg viewBox="0 0 220 220" role="img" aria-label="Left raw stick input and recorded outer-direction coverage"><circle class="health-plot-ground" cx="110" cy="110" r="96"/><path class="health-plot-grid" d="M14 110h192M110 14v192"/><circle class="health-plot-reference" cx="110" cy="110" r="68"/><path id="health-left-sweep" class="health-plot-sweep"/><circle id="health-left-dot" class="health-plot-dot" cx="110" cy="110" r="4" hidden/><text x="110" y="12" text-anchor="middle">UP</text><text x="110" y="218" text-anchor="middle">DOWN</text></svg><p id="health-left-live">Raw input —</p></figure>
+                <figure class="right-series"><figcaption id="health-right-label">Right stick</figcaption><svg viewBox="0 0 220 220" role="img" aria-label="Right raw stick input and recorded outer-direction coverage"><circle class="health-plot-ground" cx="110" cy="110" r="96"/><path class="health-plot-grid" d="M14 110h192M110 14v192"/><circle class="health-plot-reference" cx="110" cy="110" r="68"/><path id="health-right-sweep" class="health-plot-sweep"/><circle id="health-right-dot" class="health-plot-dot" cx="110" cy="110" r="4" hidden/><text x="110" y="12" text-anchor="middle">UP</text><text x="110" y="218" text-anchor="middle">DOWN</text></svg><p id="health-right-live">Raw input —</p></figure>
+              </div>
+              <p id="health-step-detail" class="health-step-detail">The ring is normalized radius 1. Colored arcs show each recorded sector's furthest input.</p>
+              <div class="health-actions"><button id="health-next" class="button primary" disabled>Next step</button><button id="health-pause" class="button secondary" disabled>Pause</button><button id="health-repeat" class="button secondary" disabled>Repeat step</button><button id="health-skip" class="button quiet" disabled>Skip step</button><button id="health-stop" class="button quiet" disabled>Finish early</button></div>
+            </div>
+          </div>
+          <p id="health-message" class="health-message" role="status">Preview inputs cannot produce a controller check.</p>
+          <div id="health-results" class="health-results" hidden>
+            <div class="health-report-heading"><div><h3>Recorded measurements</h3><p id="health-report-context"></p></div><span id="health-report-state" class="tag">Partial check</span></div>
+            <p id="health-report-conditions" class="health-report-conditions"></p>
+            <p id="health-report-interruptions" class="health-report-conditions"></p>
+            <div id="health-tables" class="health-tables"></div>
+            <div id="health-button-section" class="health-button-section"><h3>Button press / release ledger</h3><p id="health-button-help">A fresh press and its release must both be observed. Mark a position unavailable only if it is absent or intercepted on this controller.</p><div id="health-buttons" class="health-buttons"></div></div>
+            <div class="health-recommendation"><p id="health-recommendation"></p><button id="health-apply-deadzone" class="button secondary" disabled>Try suggested deadzone</button></div>
+            <div class="health-export-actions"><button id="health-save" class="button secondary" disabled>Save locally</button><button id="health-export-json" class="button secondary" disabled>Download JSON</button><button id="health-export-text" class="button secondary" disabled>Download text</button><button id="health-print" class="button secondary" disabled>Print / save PDF</button></div>
+          </div>
+          <div class="health-history"><div class="section-top"><h3>Saved checks</h3><button id="health-clear-history" class="text-button" disabled>Clear saved checks</button></div><p id="health-history-status">Save up to ten checks in this browser. Reports stay on this device.</p><div id="health-history-list" class="health-history-list"></div><label class="health-compare-field" for="health-compare">Compare with a saved check<select id="health-compare"><option value="">Choose a saved check</option></select></label><p id="health-comparison" class="health-comparison"></p></div>
+          <details class="health-method"><summary>How these measurements work</summary><p>Hands-off results use five uninterrupted seconds of browser observations. P95 is the radius below which 95% of observations fall; jitter measures movement around the average position. The 5% reference is a PadScope comparison aid, not a manufacturer tolerance.</p><p>Stick sweeps record peak radius in 24 directions, ignoring movement inside radius 0.5. Circularity describes how the reported outline differs from a unit circle; square or shaped outputs can be normal. Trigger values describe reported input, not physical force or travel.</p><p>The warm-up checks that stick axes actually respond. Browser, driver, controller profiles, and firmware can filter input before it reaches PadScope. Focus loss pauses capture; incomplete hands-off windows restart. The check does not measure latency or certify hardware health. <a href="https://github.com/uzairdeveloper223/PadScope/blob/main/docs/HEALTH_CHECK.md" target="_blank" rel="noreferrer">Full method and research sources</a>.</p></details>
+        </div>
       </section>
 
       <section id="target-range" class="range-section" aria-labelledby="range-title">

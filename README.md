@@ -12,6 +12,7 @@ Built with TypeScript, Three.js, and Vite. Controller readings and preferences s
 
 - **Live 3D controller:** animated buttons, hinged triggers, smooth stick tilt with fading direction arrows, touch contacts, and motion; drag to orbit, zoom, switch views, and customize the model's shell and lightbar.
 - **Input workbench:** raw and calibrated stick plots, trails, trigger pressure, button coverage, recent presses, and JSON report export.
+- **Guided controller check:** five-second hands-off measurements, 24-direction stick sweeps, trigger cycles, button press/release coverage, a measured local deadzone suggestion, saved comparisons, and JSON/text/PDF reports.
 - **Local calibration:** stick centers, radial deadzone, motion zero, and automatic small gyro-offset correction while resting.
 - **Hardware tools:** compatible touchpad, gyro, acceleration, approximate battery level, report rate, independent rumble motors, and lightbar commands.
 - **Target range:** 60-second rounds with five moving targets, score, accuracy, streaks, three blasters, joystick or grip-relative gyro aiming, and remappable controls.
@@ -95,6 +96,16 @@ sudo udevadm control --reload-rules
 
 Unplug and reconnect the controller, then retry **Connect hardware**. The rule grants the active local session access to that device. Browser packaging or sandboxing may also affect access. Bluetooth devices can expose different parent attributes; inspect their actual node instead of assuming the USB rule applies.
 
+## Check your controller
+
+Open **Controller check** below the live inputs and select **Start check**. Warm up both sticks, keep hands off for five seconds, sweep their outer edges, pull/release the triggers, then press/release each exposed button. Each step advances when you choose; you can repeat, skip, or finish early.
+
+Results show resting offset, P95 radius, jitter, direction coverage, trigger endpoints/cycles, and actual button pairs. Untested or unavailable controls stay explicit. The check uses input **before PadScope calibration**; a stable, verified resting capture can suggest a radial deadzone for PadScope only.
+
+Record connection and profile/firmware notes, save up to ten checks locally, and compare resting input under matching conditions. **Download JSON**, **Download text**, and **Print / save PDF** keep independent copies. Preview cannot produce a check. Focus/input loss pauses capture; a source change keeps the collected evidence and ends the active check.
+
+See the [measurement method and research sources](docs/HEALTH_CHECK.md). Reference percentages describe browser-visible observations, not manufacturer fault tolerances or hardware latency.
+
 ## Calibrate your baseline
 
 - **Calibrate centers:** release both sticks and keep the controller still while PadScope samples their resting positions.
@@ -163,6 +174,9 @@ Tracks and effects are bundled and served locally. [Audio attribution and full l
 | Model/range cannot load | Enable hardware acceleration and check that the site serves its bundled models and textures. Close/reopen the area to retry a load failure. |
 | Gyro aim or inspection unavailable | Exit preview, connect real HID motion, and center your grip. |
 | Motion needs lining up | Hold still and use Motion zero, then center the relevant grip again. |
+| Controller check pauses | Keep the check open and PadScope focused; resume explicitly. Incomplete hands-off captures restart. |
+| A check button stays untested | Release it first, then press/release again; the OS may intercept system buttons. Mark unavailable only when appropriate. |
+| No deadzone suggestion | Complete a stable hands-off window and verify the exposed stick axes in warm-up; repeat if you touched the sticks. |
 | No music | Check switches/volumes, interact with a page control, and keep the area visible and the page focused. |
 | Rumble or color command has no visible result | Check capability labels and the physical device; an accepted command is not hardware readback. |
 | Preferences are not remembered | Browser storage may be disabled; settings still work for the session. |
@@ -172,6 +186,7 @@ Tracks and effects are bundled and served locally. [Audio attribution and full l
 ```text
 src/main.ts              Input selection, calibration, hardware tools, app wiring
 src/controller/          Gamepad/HID state, Sony report parsing, motion tracking
+src/health/              Guided checks, measurement math, saved reports, comparison
 src/model.ts             Controller model articulation and framing
 src/ui.ts, src/plots.ts   Readings, button history, plots
 src/environment.ts       Browser/platform guidance and theme selection
@@ -182,7 +197,7 @@ public/audio/            Music, effects, attribution, Creative Commons licenses
 tests/                   Node regressions using real GLB assets and report data
 ```
 
-Run `npm test` and `npm run build` before contributing. The regression suite covers real-model orientation/hit detection/framing, gyro rest and axis behavior, report decoding/output checksums, grip rotation, trigger edges, settings, and round scoring. See [range and inspection implementation notes](src/game/README.md).
+Run `npm test` and `npm run build` before contributing. The regression suite covers real-model orientation/hit detection/framing, gyro rest and axis behavior, report decoding/output checksums, grip rotation, trigger edges, settings, round scoring, and guided-check measurements/continuity/report storage. See [range and inspection implementation notes](src/game/README.md) and [controller check methodology](docs/HEALTH_CHECK.md).
 
 Browser rendering, audio playback quality, and physical controller feel are manual checks. Test both themes, narrow/desktop layouts, centering and rotation on all three axes, freeze/resume, input loss, remapping, and asset loading under the deployment path. When reporting an issue, include browser/OS, USB or Bluetooth, device IDs, and reproduction steps. PadScope's JSON export can help explain the current readings.
 

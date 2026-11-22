@@ -11,6 +11,8 @@ import { TargetRange } from './game/game.ts';
 import { BlasterInspection } from './game/inspection.ts';
 import type { RangeInput } from './game/game.ts';
 import { WorkbenchAudio } from './audio.ts';
+import { ControllerCheck } from './health/ui.ts';
+import type { HealthDevice } from './health/session.ts';
 
 class PadScope {
   private hid = new HidController();
@@ -18,6 +20,9 @@ class PadScope {
   private model: ModelView | null = null;
   private range: TargetRange;
   private inspection: BlasterInspection;
+  private check: ControllerCheck;
+  private hidIdentities = new WeakMap<HIDDevice, number>();
+  private nextHidIdentity = 0;
   private motion = new MotionTracker();
   private state = emptyState();
   private settings: Settings = defaultSettings();
@@ -46,6 +51,12 @@ class PadScope {
     const audio = new WorkbenchAudio();
     this.range = new TargetRange(() => this.model?.createReplica() ?? null, audio);
     this.inspection = new BlasterInspection(audio);
+    this.check = new ControllerCheck(() => this.settings, (value, report) => {
+      if (this.preview || !this.active || this.healthDevice()?.source !== report.device.source || !this.settings.centers.every((center, index) => center === report.calibration.centers[index])) return false;
+      this.settings.deadzone = value; this.syncSettings(); this.persist();
+      text('calibration-status', `Measured ${Math.round(value * 100)}% deadzone applied. Raw controller-check readings are preserved.`);
+      return true;
+    });
     this.bindEvents();
     this.restoreAppearance();
     setupTheme();
@@ -103,6 +114,7 @@ class PadScope {
     this.active = this.preview || this.hid.fresh || this.pad !== null;
     this.state = this.preview ? previewState(time / 1000) : this.hid.fresh ? this.hid.state! : this.pad ? gamepadState(this.pad) : emptyState();
     this.syncDevice(pads);
+    this.check.update(time, { device: this.healthDevice(), axes: this.state.axes, buttons: this.state.buttons, timestamp: this.state.timestamp, active: this.active, preview: this.preview });
     this.updateMotion();
     const corrected = correctedAxes(this.state.axes, this.settings);
     this.ui.capture(this.state, this.active);
@@ -125,6 +137,18 @@ class PadScope {
     if (!this.pad) return 'unconnected';
     const ids = this.pad.id.match(/Vendor:\s*([0-9a-f]{4}).*Product:\s*([0-9a-f]{4})/i);
     return ids ? `hid:${parseInt(ids[1], 16).toString(16)}:${parseInt(ids[2], 16).toString(16)}` : `gamepad:${this.pad.id}`;
+  }
+
+  private healthDevice(): HealthDevice | null {
+    if (this.preview) return null;
+    if (this.hid.fresh) {
+      const device = this.hid.device!;
+      if (!this.hidIdentities.has(device)) this.hidIdentities.set(device, ++this.nextHidIdentity);
+      return { source: `${this.deviceKey}:hid:${this.hidIdentities.get(device)}`, key: this.deviceKey, name: device.productName,
+        api: 'hid', mapping: 'sony-hid', connection: this.hid.transport ?? 'not recorded', axes: 4, buttons: this.state.buttons.length };
+    }
+    return this.pad ? { source: `${this.deviceKey}:gamepad:${this.pad.index}`, key: this.deviceKey, name: this.pad.id,
+      api: 'gamepad', mapping: this.pad.mapping === 'standard' ? 'standard' : 'unmapped', connection: 'not recorded', axes: this.pad.axes.length, buttons: this.pad.buttons.length } : null;
   }
 
   private syncDevice(pads: Gamepad[]): void {
