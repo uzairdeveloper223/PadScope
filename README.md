@@ -10,7 +10,7 @@ Built with TypeScript, Three.js, and Vite. Controller readings and preferences s
 
 ## Features
 
-- **Live 3D controller:** animated buttons, sticks, triggers, touch contacts, and motion; drag to orbit, zoom, switch views, and customize the model's shell and lightbar.
+- **Live 3D controller:** animated buttons, hinged triggers, smooth stick tilt with fading direction arrows, touch contacts, and motion; drag to orbit, zoom, switch views, and customize the model's shell and lightbar.
 - **Input workbench:** raw and calibrated stick plots, trails, trigger pressure, button coverage, recent presses, and JSON report export.
 - **Local calibration:** stick centers, radial deadzone, motion zero, and automatic small gyro-offset correction while resting.
 - **Hardware tools:** compatible touchpad, gyro, acceleration, approximate battery level, report rate, independent rumble motors, and lightbar commands.

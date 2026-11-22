@@ -5,8 +5,10 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { DecalGeometry } from 'three/addons/geometries/DecalGeometry.js';
 import { buttonParts } from './controller/state.ts';
 import type { Axes, Contact, Rotation } from './controller/state.ts';
+import { animateControl, createStickDirection, pivotControl } from './model-controls.ts';
+import type { ControlMotion } from './model-controls.ts';
 
-interface ControlPart { group: THREE.Group; origin: THREE.Vector3; materials: { material: THREE.MeshStandardMaterial; color: THREE.Color; emissive: THREE.Color; intensity: number }[] }
+interface ControlPart extends ControlMotion { materials: { material: THREE.MeshStandardMaterial; color: THREE.Color; emissive: THREE.Color; intensity: number }[] }
 export interface ControllerReplica { object: THREE.Group; sync: () => void }
 
 export class ModelView {
@@ -33,6 +35,8 @@ export class ModelView {
   private visible = true;
   private dirty = true;
   private lastSignature = '';
+  private previousTime: number | null = null;
+  private highlightColor = new THREE.Color(0xe9815c);
   private target = new THREE.Quaternion();
   private size = new THREE.Vector3(5.3, 3.5, 2.2);
 
@@ -108,7 +112,7 @@ export class ModelView {
           material.roughness = .5;
           material.metalness = 0;
         }
-        if (mesh.name.includes('stick__head')) {
+        if (mesh.name.includes('stick__head-and-shaft__')) {
           material.metalness = 0;
           material.roughness = .85;
           material.color.set('#181a1d');
@@ -129,25 +133,17 @@ export class ModelView {
           const group = new THREE.Group();
           group.name = `control-${part}`;
           model.add(group);
-          entry = { group, origin: new THREE.Vector3(), materials: [] };
+          entry = { group, origin: new THREE.Vector3(), glow: 0, materials: [] };
           this.parts.set(part, entry);
         }
         entry.group.attach(mesh);
         entry.materials.push({ material, color: material.color.clone(), emissive: material.emissive.clone(), intensity: material.emissiveIntensity });
       }
       for (const [name, entry] of this.parts) {
-        const box = new THREE.Box3().setFromObject(entry.group);
-        const pivot = box.getCenter(new THREE.Vector3());
-        model.worldToLocal(pivot);
-        if (name.endsWith('stick')) pivot.z = box.min.z - model.position.z;
-        if (name === 'l2' || name === 'r2') pivot.y = box.max.y - model.position.y;
-        const children = [...entry.group.children];
-        children.forEach(child => model.attach(child));
-        entry.group.position.copy(pivot);
-        children.forEach(child => entry.group.attach(child));
-        entry.origin.copy(pivot);
+        entry.origin.copy(pivotControl(name, entry.group, model));
       }
       this.addSymbols();
+      this.addStickDirections();
       this.prepareTouchMarkers();
       this.loaded = true;
       this.loading.hidden = true;
@@ -204,6 +200,8 @@ export class ModelView {
     this.shellColor = color;
     const shell = new THREE.Color(color);
     const dark = shell.r * .2126 + shell.g * .7152 + shell.b * .0722 < .3;
+    // Appearance changes must not save active input feedback as the rest color.
+    for (const part of this.parts.values()) for (const surface of part.materials) surface.material.color.copy(surface.color);
     for (const material of this.shells) material.color.copy(shell);
     for (const material of this.caps) material.color.set(dark ? '#30343a' : '#d4d9df');
     for (const material of this.symbols) material.color.set(dark ? '#d8e1e8' : '#4c5966');
@@ -256,11 +254,24 @@ export class ModelView {
     }
   }
 
+  private addStickDirections(): void {
+    const source = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="256" height="256"><path fill="white" d="M64 18 110 62H81v48H47V62H18Z"/></svg>';
+    for (const name of ['left-stick', 'right-stick']) {
+      const part = this.parts.get(name);
+      const cap = part?.group.children.find(child => child instanceof THREE.Mesh && child.name.includes('__head-and-shaft__')) as THREE.Mesh | undefined;
+      if (!part || !cap) continue;
+      const texture = new THREE.TextureLoader().load(`data:image/svg+xml,${encodeURIComponent(source)}`, () => { this.dirty = true; });
+      texture.colorSpace = THREE.SRGBColorSpace;
+      part.direction = createStickDirection(cap, part.group, texture);
+    }
+  }
+
   createReplica(): ControllerReplica | null {
     if (!this.loaded) return null;
     const object = this.body.clone(true);
     object.quaternion.identity();
-    const sources = [...this.parts.values()].map(part => part.group).concat(this.touchMarkers);
+    const sources: THREE.Object3D[] = [...this.parts.values()].flatMap(part => part.direction ? [part.group, part.direction] : [part.group]);
+    sources.push(...this.touchMarkers);
     const pairs = sources.map(source => [source, object.getObjectByName(source.name)!] as const);
     return { object, sync: () => {
       for (const [source, copy] of pairs) {
@@ -292,43 +303,49 @@ export class ModelView {
   }
 
   update(axes: Axes, buttons: number[], orientation: Rotation, followMotion: boolean, contacts: Contact[] | null, touchSize: [number, number]): void {
-    if (!this.loaded || document.hidden) return;
+    if (!this.loaded || document.hidden) { this.previousTime = null; return; }
+    const now = performance.now();
+    const dt = this.previousTime === null ? 1 / 60 : Math.max(0, Math.min(.05, (now - this.previousTime) / 1000));
+    this.previousTime = now;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const blend = reduced ? 1 : 1 - Math.exp(-18 * dt);
     if (this.motionEnabled !== followMotion) { this.motionEnabled = followMotion; this.fitCamera(); }
     const signature = [...axes, ...buttons, ...(followMotion ? orientation : [0, 0, 0, 1]), ...(contacts ?? []).flatMap(c => [Number(c.active), c.x, c.y]), ...touchSize].map(n => n.toFixed(3)).join(',');
-    if (signature !== this.lastSignature) {
-      this.lastSignature = signature;
-      for (const [name, part] of this.parts) {
-        const index = buttonParts.indexOf(name);
-        const value = buttons[index] ?? 0;
-        part.group.position.copy(part.origin);
-        part.group.rotation.set(0, 0, 0);
-        if (name.endsWith('stick')) {
-          const offset = name === 'left-stick' ? 0 : 2;
-          part.group.rotation.set(axes[offset + 1] * .3, axes[offset] * .3, 0);
-          part.group.position.z -= value * .035;
-        } else if (name === 'l2' || name === 'r2') part.group.rotation.x = -value * .4;
-        else part.group.position.z -= value * .035;
+    const changed = signature !== this.lastSignature;
+    for (const [name, part] of this.parts) {
+      const value = buttons[buttonParts.indexOf(name)] ?? 0;
+      const animated = animateControl(name, part, axes, value, blend);
+      if (changed || animated) {
         for (const surface of part.materials) {
           surface.material.color.copy(surface.color);
           surface.material.emissive.copy(surface.emissive);
           surface.material.emissiveIntensity = surface.intensity;
-          if (value > .05) {
-            surface.material.color.lerp(new THREE.Color(0xe9815c), .65 * value);
+          const glow = name.endsWith('stick') ? part.glow : value > .05 ? value : 0;
+          if (glow > 0) {
+            surface.material.color.lerp(this.highlightColor, name.endsWith('stick') ? glow : .65 * glow);
             surface.material.emissive.set(0xb04427);
-            surface.material.emissiveIntensity = .14 * value;
+            surface.material.emissiveIntensity = .14 * glow;
           }
           if (name === 'touchpad' && contacts?.some(contact => contact.active)) {
             surface.material.emissive.set('#23776a');
             surface.material.emissiveIntensity = .18;
           }
         }
+        if (part.direction) {
+          const color = part.materials[0].material.color;
+          const luminance = color.r * .2126 + color.g * .7152 + color.b * .0722;
+          part.direction.material.color.set(luminance > .179 ? '#163747' : '#ffffff');
+        }
+        this.dirty = true;
       }
+    }
+    if (changed) {
+      this.lastSignature = signature;
       this.target.fromArray(followMotion ? orientation : [0, 0, 0, 1]);
       this.updateTouches(contacts, touchSize);
       this.dirty = true;
     }
     if (!this.visible) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (this.body.quaternion.angleTo(this.target) > .001) {
       this.body.quaternion.slerp(this.target, reduced ? 1 : .22);
       this.dirty = true;
