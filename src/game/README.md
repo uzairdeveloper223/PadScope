@@ -40,4 +40,4 @@ Credits: [Kenney Blaster Kit 2.1, CC0](../../public/models/range/ATTRIBUTION.md)
 
 ## Verification
 
-Run `npm test` for grip-basis, recentering, offscreen exclusion, stick timing, trigger, settings, round, real target-mesh hit detection, cooldown, blaster/target/crate orientation, free inspection rotation, freezing, and camera-framing regressions. Run `npm run build` for TypeScript and production assets. Browser and physical-grip verification are performed manually by the user, as requested.
+Run `npm test` for aiming, input, scoring, model geometry, and inspection regressions. Run `npm run build` to check TypeScript and build production assets. Rendering, audio playback, and controller feel need browser testing.

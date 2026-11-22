@@ -1,4 +1,4 @@
-# Controller protocol and evidence notes
+# Controller protocols
 
 PadScope reads standard controls through the browser Gamepad API and compatible Sony HID reports through WebHID. The visible PS5 Controller model is a presentation choice; parsing follows the device's vendor/product ID and actual reports.
 
@@ -23,7 +23,7 @@ DS4 USB data offsets, excluding the report ID:
 
 When multiple touch packets are present, PadScope uses the newest complete packet. DS4 battery levels 0–9 are coarse intervals represented by their midpoints, 10 is full, and plugged level 11 is the full state; invalid/error values remain unknown.
 
-## Evidence and limitations
+## Tested reports
 
 Twenty-four 64-byte USB reports were captured from a physical PS5-shell controller identifying as `054c:09cc`. A representative report is embedded in `tests/protocol.test.ts`; it decodes gyro `[27, 8, 6]`, acceleration `[-1028, 8347, 3161]`, inactive contacts, and plugged battery around 95%.
 

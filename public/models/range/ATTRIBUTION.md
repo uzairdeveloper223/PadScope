@@ -6,7 +6,7 @@
 
 Downloaded free from Kenney's official asset page on 21 November 2026. CC0 permits copying, modification, and redistribution, including in an open-source repository. Credit is voluntary and is displayed in PadScope. The original license notice is retained in [LICENSE.txt](./LICENSE.txt).
 
-Included files are original GLBs and their shared texture. Runtime changes include scaling, placement, orientation, target motion, and hit animation. Three blasters are selectable: Compact (`blaster-a`), Carbine (`blaster-p`), and Longshot (`blaster-e`). PadScope adds grip/cursor-relative weapon aiming, recoil, muzzle flashes, shot tracers, and impact feedback, plus a separate grip-centered blaster inspection view. Blaster barrels use source -Z, target faces use source -X, and crate lids retain source +Y. The range floor, rails, carriages, signage, reticle, and feedback are authored in code. No generated model or imagery is bundled.
+Included files are original GLBs and their shared texture. Runtime changes include scaling, placement, orientation, target motion, and hit animation. Three blasters are selectable: Compact (`blaster-a`), Carbine (`blaster-p`), and Longshot (`blaster-e`). PadScope adds grip/cursor-relative weapon aiming, recoil, muzzle flashes, shot tracers, and impact feedback, plus a separate grip-centered blaster inspection view. Blaster barrels use source -Z, target faces use source -X, and crate lids retain source +Y. The range floor, rails, carriages, signage, reticle, and feedback are authored in code.
 
 | File | SHA-256 |
 | --- | --- |

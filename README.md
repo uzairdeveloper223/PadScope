@@ -3,31 +3,23 @@
 # PadScope
 
 [![Build and deployment](https://github.com/uzairdeveloper223/PadScope/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/uzairdeveloper223/PadScope/actions/workflows/pages.yml)
-[![Live app](https://img.shields.io/badge/live_app-GitHub_Pages-163747)](https://uzairdeveloper223.github.io/PadScope/)
 [![Code license: MIT](https://img.shields.io/badge/code_license-MIT-163747)](LICENSE)
 
-**A 3D gamepad tester and controller workbench for the browser.** Check stick drift, test buttons and triggers, save guided reports, and see live input on an artist-made PS5 Controller model. Use the same controller for joystick or gyro target practice and hands-on blaster inspection.
+PadScope is a browser-based controller tester. It shows live input on a 3D PS5 Controller model, measures resting stick movement, and saves guided test reports. It also includes a joystick/gyro target range and a controller-driven blaster viewer.
 
-**[Open PadScope →](https://uzairdeveloper223.github.io/PadScope/)** · [Compatibility](#browser-and-device-compatibility) · [Controller check](#check-your-controller) · [Development](#development-and-verification) · [Contributing](CONTRIBUTING.md)
+**[Open PadScope](https://uzairdeveloper223.github.io/PadScope/)** · [Report an issue](https://github.com/uzairdeveloper223/PadScope/issues)
 
-Built with TypeScript, Three.js, and Vite. Controller readings and preferences stay on your device; the application has no backend or analytics. The code is MIT-licensed, with separate licenses for the credited models, music, and fonts.
-
-## Try it in a minute
-
-1. [Open the live app](https://uzairdeveloper223.github.io/PadScope/), connect a controller over USB or Bluetooth, and press a button with the page focused.
-2. Watch the sticks, triggers, and buttons respond. For supported motion, touch, battery, rumble, and lights, use **Connect hardware** in desktop Chrome or Edge.
-3. Open **Controller check**, select **Start check**, and follow the five steps. Save or download a report to compare later.
-
-Without a controller, select **Try a preview** to explore the workbench, or play the target range with a pointer or keyboard. Guided checks and blaster inspection require live controller input; inspection also requires motion.
+Built with TypeScript, Three.js, and Vite. Readings, reports, and settings stay in your browser. There is no backend or analytics.
 
 ## Features
 
-- **Live 3D controller:** animated buttons, hinged triggers, smooth stick tilt with fading direction arrows, touch contacts, and motion; drag to orbit, zoom, switch views, and customize the model's shell and lightbar.
-- **Stick testing and calibration:** raw/calibrated plots, trails, center calibration, radial deadzone, motion zero, and resting gyro-offset correction.
-- **Guided reports:** five-second hands-off measurements, 24-direction stick sweeps, trigger cycles, button press/release coverage, a measured local deadzone suggestion, saved comparisons, and JSON/text/PDF exports.
-- **Input and hardware tools:** trigger pressure, button history, JSON input export, compatible touchpad/gyro/acceleration reports, approximate battery level, report rate, independent rumble motors, and lightbar commands.
-- **Target range and inspection:** 60-second moving-target rounds, score/accuracy/streaks, three blasters, joystick or grip-relative gyro aiming, remappable controls, and an independent 1:1 rotation view with center, freeze/resume, and zoom.
-- **Workspace preferences:** desktop/mobile layouts, system-aware light/dark themes, simulated preview, and separate range/inspection music with range sound effects and remembered audio controls.
+- Animated controller model with orbit, zoom, and shell/lightbar colors.
+- Raw and calibrated stick plots, trigger values, button history, and input export.
+- Guided stick, trigger, and button checks with saved comparisons and JSON/text/PDF reports.
+- Local stick-center, deadzone, and motion calibration.
+- Motion, touchpad, battery, rumble, and lightbar tools on supported WebHID devices.
+- A 60-second target range and 1:1 blaster rotation viewer with remappable controls.
+- Light/dark themes, mobile layouts, music, and range sound effects.
 
 ## Connect a controller
 
@@ -37,6 +29,8 @@ Without a controller, select **Try a preview** to explore the workbench, or play
 4. Check the live status labels. A feature is usable only when the controller and browser expose it.
 
 Previously granted HID devices are reopened when possible. **Disconnect hardware** closes PadScope's HID connection; browser site settings control the saved permission. If multiple gamepads are present, use the active-controller selector.
+
+Without a controller, select **Try a preview** or use a pointer/keyboard in the target range. Guided checks need live input; blaster inspection also needs motion.
 
 ### Browser and device compatibility
 
@@ -56,7 +50,7 @@ The HID chooser currently recognizes these Sony vendor/product IDs:
 
 Compatible third-party controllers may use these IDs. Physical appearance does not establish protocol support. Other controllers can use Gamepad input when the browser exposes it; unmapped gamepads show raw button indices and the first four axes.
 
-USB input was checked against reports from a PS5-shell controller identifying as `054c:09cc`. The code includes USB and Bluetooth pathways for both protocol families; this is **not a claim that every device/transport combination has been physically verified**. See [protocol notes](docs/PROTOCOL.md).
+USB reports have been checked on a PS5-shell controller identifying as `054c:09cc`. Other device/connection combinations still need hardware testing. See [protocol notes](docs/PROTOCOL.md) for supported layouts and test data.
 
 Rumble depends on HID output or browser Gamepad haptics. Adaptive-trigger effects and microphone controls are not implemented. The OS may intercept the PS button. Battery is an estimate, report rate is not latency, and the lightbar's current color has no readback.
 
@@ -89,7 +83,7 @@ Open **Controller check** below the live inputs and select **Start check**. Warm
 
 Results show resting offset, P95 radius, jitter, direction coverage, trigger endpoints/cycles, and actual button pairs. Untested or unavailable controls stay explicit. The check uses input **before PadScope calibration**; a stable, verified resting capture can suggest a radial deadzone for PadScope only.
 
-Record connection and profile/firmware notes, save up to ten checks locally, and compare resting input under matching conditions. **Download JSON**, **Download text**, and **Print / save PDF** keep independent copies. Preview cannot produce a check. Focus/input loss pauses capture; a source change keeps the collected evidence and ends the active check.
+Record connection and profile/firmware notes, save up to ten checks locally, and compare resting input under matching conditions. Use **Download JSON**, **Download text**, or **Print / save PDF** to keep a copy. Losing focus or input pauses capture; switching controllers ends the active check and keeps its recorded results.
 
 See the [measurement method and research sources](docs/HEALTH_CHECK.md). Reference percentages describe browser-visible observations, not manufacturer fault tolerances or hardware latency.
 
@@ -208,13 +202,13 @@ public/audio/            Music, effects, attribution, Creative Commons licenses
 tests/                   Node regressions using real GLB assets and report data
 ```
 
-Run `npm test` and `npm run build` before contributing. The regression suite covers real-model orientation/hit detection/framing, gyro rest and axis behavior, report decoding/output checksums, grip rotation, trigger edges, settings, round scoring, and guided-check measurements/continuity/report storage. See [range and inspection implementation notes](src/game/README.md) and [controller check methodology](docs/HEALTH_CHECK.md).
+Run `npm test` and `npm run build` before contributing. Tests cover report decoding, motion, model geometry, range controls/scoring, and guided-check measurements and storage. See [range and inspection notes](src/game/README.md) and [controller check measurements](docs/HEALTH_CHECK.md).
 
-Browser rendering, audio playback quality, and physical controller feel are manual checks. Test both themes, narrow/desktop layouts, centering and rotation on all three axes, freeze/resume, input loss, remapping, and asset loading under the deployment path. When reporting an issue, include browser/OS, USB or Bluetooth, device IDs, and reproduction steps. PadScope's JSON export can help explain the current readings.
+Rendering, audio, and controller feel need browser testing. For related changes, check both themes, narrow layouts, input loss, and asset loading under `/PadScope/`.
 
 ## Contributing and feedback
 
-Bug fixes, documentation improvements, accessibility work, and controller compatibility reports are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, verification, and asset attribution requirements.
+See [CONTRIBUTING.md](CONTRIBUTING.md) for pull requests and controller reports.
 
 - [Report a bug](https://github.com/uzairdeveloper223/PadScope/issues/new?template=bug_report.yml)
 - [Share a controller compatibility result](https://github.com/uzairdeveloper223/PadScope/issues/new?template=controller_compatibility.yml)
@@ -246,6 +240,6 @@ Created and maintained by **[Uzair Mughal](https://github.com/uzairdeveloper223)
 | Sci-fi Sounds 1.0 | Kenney | CC0 1.0 | [Sources and selected effects](public/audio/ATTRIBUTION.md) |
 | Barlow and JetBrains Mono | Their respective font authors | SIL OFL 1.1 | [Third-party notices](THIRD_PARTY_NOTICES.md) |
 
-Model and audio licenses are separate from the MIT code license. Keep their attribution and notices when redistributing PadScope. All bundled models and audio are sourced artist-made assets. See [third-party notices](THIRD_PARTY_NOTICES.md) for library and font licensing.
+Model and audio licenses are separate from the MIT code license. Keep their attribution and notices when redistributing PadScope. See [third-party notices](THIRD_PARTY_NOTICES.md) for library and font licensing.
 
 PadScope is an independent project and is not affiliated with Sony, the model artists, or the audio creators. PlayStation, DualShock, and DualSense are Sony trademarks.

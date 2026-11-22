@@ -1,6 +1,6 @@
 # PadScope audio
 
-Audio is separately licensed from PadScope's MIT code. Files were downloaded from the creators' sources on 21 November 2026 and re-encoded for browser delivery. No generated music or sound effects are bundled.
+Audio is separately licensed from PadScope's MIT code. Files were downloaded from the creators' sources on 21 November 2026 and re-encoded for browser delivery.
 
 ## Background music — Kevin MacLeod
 

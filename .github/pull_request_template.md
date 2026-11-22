@@ -1,11 +1,7 @@
-## Change
+## What changed
 
-<!-- Explain what changed and why. Link a related issue if there is one. -->
+<!-- Describe the change and link an issue if relevant. -->
 
-## Verification
+## How I checked it
 
-<!-- List commands and results. For interface/hardware checks, include the environment and mark checks as tested or untested. -->
-
-## Screenshots or controller evidence
-
-<!-- Add before/after images, report samples, or measured results when they help review the change. Remove this section if it does not apply. -->
+<!-- Include test results and any browser/controller checks. Add screenshots if useful. -->

@@ -103,14 +103,12 @@ Browser identifiers can identify a product/slot rather than a unique physical co
 
 Everything stays local. There is no server, analytics, upload, or remote diagnostics endpoint. Clearing site data removes saved checks. Downloaded reports remain independent of browser storage. Print includes recorded conditions and measurements.
 
-## Research and design decisions
-
-Sources inspected **22 November 2026**. Measurements and implementation were written for PadScope; no tester source code or third-party imagery was copied into this feature.
+## References
 
 | Source | What it informed |
 | --- | --- |
 | [W3C Gamepad specification](https://w3c.github.io/gamepad/) | Normalized axes/buttons, standard positional mapping, and browser-visible input scope |
-| [MDN: Using the Gamepad API](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API), [timestamp](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/timestamp), [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) | Animation-frame sampling, last-update timestamps, and background-page limitations; documentation also checked through Context7 |
+| [MDN: Using the Gamepad API](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API), [timestamp](https://developer.mozilla.org/en-US/docs/Web/API/Gamepad/timestamp), [requestAnimationFrame](https://developer.mozilla.org/en-US/docs/Web/API/Window/requestAnimationFrame) | Animation-frame sampling, last-update timestamps, and background-page limitations |
 | [Chromium `GamepadPadStateProvider`](https://github.com/chromium/chromium/blob/2ef21ead8cf5ba3ce6202d7e8cb5cb41450e605e/device/gamepad/gamepad_pad_state_provider.cc) | Initial held-input sanitization; pinned source motivates warm-up and verified-axis labels |
 | [Microsoft: Getting started with XInput](https://learn.microsoft.com/en-us/windows/win32/xinput/getting-started-with-xinput) | Different games/controllers use different deadzone choices; avoid a universal hardware fault threshold |
 | [PlayStation: DualSense Edge profiles on PC](https://www.playstation.com/en-us/support/hardware/set-up-edge-pc/) | Stick curves, deadzones, and trigger settings are profile-dependent; capture notes and avoid interpreting endpoints as physical travel |
@@ -122,4 +120,4 @@ Sources inspected **22 November 2026**. Measurements and implementation were wri
 
 `tests/health-check.test.ts` checks known numeric outcomes, motion verification, interrupted resting windows, source isolation, preserved partial evidence, circular/square sweep coverage, trigger continuity, held-button baselining, unmapped inputs, report snapshots, like-for-like comparison, and corrupt/unavailable storage. `npm test` and `npm run build` are required checks.
 
-Browser rendering, printing layout, and real-controller feel are manual user checks. Try the flow on HID and Gamepad input, both themes, narrow/desktop layouts, interrupted focus, a held trigger/button at entry, skipped controls, saved checks, comparison, and the three export actions.
+Browser testing should cover HID and Gamepad input, both themes, narrow layouts, focus loss, held controls at entry, skipped steps, saved comparisons, downloads, and printing.

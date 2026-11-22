@@ -1,15 +1,15 @@
 name: Controller compatibility
-description: Share what worked or failed on a specific controller, browser, and connection.
+description: Report results for your controller.
 labels: [compatibility]
 body:
   - type: markdown
     attributes:
       value: |
-        A result for your controller helps document actual support. Record features as working, failed, unavailable, or untested. USB and Bluetooth results may differ.
+        USB and Bluetooth can behave differently. Say which connection you tested.
   - type: input
     id: controller
     attributes:
-      label: Physical controller
+      label: Controller
       placeholder: Brand and model; firmware/profile if known.
     validations:
       required: true
@@ -39,8 +39,8 @@ body:
   - type: textarea
     id: results
     attributes:
-      label: Feature results
-      description: Replace each entry with working, failed, unavailable, or untested and describe unexpected behavior.
+      label: Results
+      description: Mark each feature working, failed, unavailable, or untested.
       value: |
         - Buttons and sticks: untested
         - Analog triggers: untested
@@ -56,5 +56,5 @@ body:
   - type: textarea
     id: evidence
     attributes:
-      label: Notes and evidence
-      description: Include actions tested, the app URL or commit, and screenshots or input/check reports if useful.
+      label: Anything else?
+      description: Firmware/profile notes, screenshots, or a PadScope report.
