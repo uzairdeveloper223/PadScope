@@ -1,0 +1,56 @@
+name: Bug report
+description: Report a reproducible problem with input, checks, the 3D view, range, or audio.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Check the [troubleshooting guide](https://github.com/uzairdeveloper223/PadScope#troubleshooting) and existing issues first. For a hardware support result, you can use the controller compatibility form.
+  - type: textarea
+    id: behavior
+    attributes:
+      label: What happened, and what did you expect?
+      placeholder: Describe the affected control or area and the result you expected.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open the live app or a local build.
+        2. Connect a controller or enable preview.
+        3. ...
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and operating system
+      placeholder: Chrome 142 on Windows 11; include actual versions if known.
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Input and connection
+      options:
+        - USB controller
+        - Bluetooth controller
+        - Wireless receiver
+        - Simulated preview
+        - Pointer or keyboard only
+        - Other or unknown
+    validations:
+      required: true
+  - type: input
+    id: device
+    attributes:
+      label: Controller and device IDs, if relevant
+      placeholder: Physical model, vendor/product IDs, firmware/profile if known.
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Supporting details
+      description: Screenshots, input/check JSON, error messages, and calibration or aiming settings can help.
+      placeholder: Include the app URL or local commit and whether Gamepad or WebHID input was active.

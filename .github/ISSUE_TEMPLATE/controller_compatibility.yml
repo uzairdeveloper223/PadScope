@@ -1,0 +1,60 @@
+name: Controller compatibility
+description: Share what worked or failed on a specific controller, browser, and connection.
+labels: [compatibility]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        A result for your controller helps document actual support. Record features as working, failed, unavailable, or untested. USB and Bluetooth results may differ.
+  - type: input
+    id: controller
+    attributes:
+      label: Physical controller
+      placeholder: Brand and model; firmware/profile if known.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Browser and operating system
+      placeholder: Browser/OS names and versions.
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: Connection tested
+      options:
+        - USB
+        - Bluetooth
+        - Wireless receiver
+        - Other or unknown
+    validations:
+      required: true
+  - type: input
+    id: identifiers
+    attributes:
+      label: Device IDs and active input source
+      description: Copy the vendor/product IDs and Gamepad/WebHID status if available.
+  - type: textarea
+    id: results
+    attributes:
+      label: Feature results
+      description: Replace each entry with working, failed, unavailable, or untested and describe unexpected behavior.
+      value: |
+        - Buttons and sticks: untested
+        - Analog triggers: untested
+        - Guided controller check: untested
+        - Gyro and acceleration: untested
+        - Touchpad: untested
+        - Battery estimate: untested
+        - Rumble: untested
+        - Lightbar: untested
+        - Gyro range and blaster inspection: untested
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Notes and evidence
+      description: Include actions tested, the app URL or commit, and screenshots or input/check reports if useful.

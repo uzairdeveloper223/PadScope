@@ -2,45 +2,32 @@
 
 # PadScope
 
-**[Open PadScope →](https://uzairdeveloper223.github.io/PadScope/)**
+[![Build and deployment](https://github.com/uzairdeveloper223/PadScope/actions/workflows/pages.yml/badge.svg?branch=main)](https://github.com/uzairdeveloper223/PadScope/actions/workflows/pages.yml)
+[![Live app](https://img.shields.io/badge/live_app-GitHub_Pages-163747)](https://uzairdeveloper223.github.io/PadScope/)
+[![Code license: MIT](https://img.shields.io/badge/code_license-MIT-163747)](LICENSE)
 
-A browser-based controller workbench. See live input on an artist-made PS5 Controller model, check your sticks and sensors, and use the same controller for target practice or hands-on blaster inspection.
+**A 3D gamepad tester and controller workbench for the browser.** Check stick drift, test buttons and triggers, save guided reports, and see live input on an artist-made PS5 Controller model. Use the same controller for joystick or gyro target practice and hands-on blaster inspection.
 
-Built with TypeScript, Three.js, and Vite. Controller readings and preferences stay on your device; the application has no backend or analytics.
+**[Open PadScope →](https://uzairdeveloper223.github.io/PadScope/)** · [Compatibility](#browser-and-device-compatibility) · [Controller check](#check-your-controller) · [Development](#development-and-verification) · [Contributing](CONTRIBUTING.md)
+
+Built with TypeScript, Three.js, and Vite. Controller readings and preferences stay on your device; the application has no backend or analytics. The code is MIT-licensed, with separate licenses for the credited models, music, and fonts.
+
+## Try it in a minute
+
+1. [Open the live app](https://uzairdeveloper223.github.io/PadScope/), connect a controller over USB or Bluetooth, and press a button with the page focused.
+2. Watch the sticks, triggers, and buttons respond. For supported motion, touch, battery, rumble, and lights, use **Connect hardware** in desktop Chrome or Edge.
+3. Open **Controller check**, select **Start check**, and follow the five steps. Save or download a report to compare later.
+
+Without a controller, select **Try a preview** to explore the workbench, or play the target range with a pointer or keyboard. Guided checks and blaster inspection require live controller input; inspection also requires motion.
 
 ## Features
 
 - **Live 3D controller:** animated buttons, hinged triggers, smooth stick tilt with fading direction arrows, touch contacts, and motion; drag to orbit, zoom, switch views, and customize the model's shell and lightbar.
-- **Input workbench:** raw and calibrated stick plots, trails, trigger pressure, button coverage, recent presses, and JSON report export.
-- **Guided controller check:** five-second hands-off measurements, 24-direction stick sweeps, trigger cycles, button press/release coverage, a measured local deadzone suggestion, saved comparisons, and JSON/text/PDF reports.
-- **Local calibration:** stick centers, radial deadzone, motion zero, and automatic small gyro-offset correction while resting.
-- **Hardware tools:** compatible touchpad, gyro, acceleration, approximate battery level, report rate, independent rumble motors, and lightbar commands.
-- **Target range:** 60-second rounds with five moving targets, score, accuracy, streaks, three blasters, joystick or grip-relative gyro aiming, and remappable controls.
-- **Blaster in hand:** independent grip centering, full 1:1 rotation, freeze/resume, zoom, and model selection. Your controller acts as the physical stand-in.
-- **Audio:** separate range and inspection soundtracks, per-blaster shots, hit/bullseye feedback, and short round cues, with remembered music/effects controls.
-- **Desktop and mobile layouts**, system-aware light/dark themes, and a clearly labeled simulated preview.
-
-## Run locally
-
-Use **Node.js 24 LTS** and npm.
-
-```sh
-git clone https://github.com/uzairdeveloper223/PadScope.git
-cd PadScope
-npm ci
-npm run dev
-```
-
-Open the local URL printed by Vite, normally **http://localhost:5173/**. No API keys, environment variables, or separate asset downloads are required.
-
-| Command | Purpose |
-| --- | --- |
-| `npm run dev` | Start the development server |
-| `npm test` | Run the Node regression tests |
-| `npm run build` | Check TypeScript and produce `dist/` |
-| `npm run preview` | Serve an existing production build, normally on port 4173 |
-
-Use HTTPS or localhost for controller access. Opening `index.html` directly as a file does not run the application.
+- **Stick testing and calibration:** raw/calibrated plots, trails, center calibration, radial deadzone, motion zero, and resting gyro-offset correction.
+- **Guided reports:** five-second hands-off measurements, 24-direction stick sweeps, trigger cycles, button press/release coverage, a measured local deadzone suggestion, saved comparisons, and JSON/text/PDF exports.
+- **Input and hardware tools:** trigger pressure, button history, JSON input export, compatible touchpad/gyro/acceleration reports, approximate battery level, report rate, independent rumble motors, and lightbar commands.
+- **Target range and inspection:** 60-second moving-target rounds, score/accuracy/streaks, three blasters, joystick or grip-relative gyro aiming, remappable controls, and an independent 1:1 rotation view with center, freeze/resume, and zoom.
+- **Workspace preferences:** desktop/mobile layouts, system-aware light/dark themes, simulated preview, and separate range/inspection music with range sound effects and remembered audio controls.
 
 ## Connect a controller
 
@@ -183,6 +170,30 @@ Tracks and effects are bundled and served locally. [Audio attribution and full l
 
 ## Development and verification
 
+### Run locally
+
+Use **Node.js 24 LTS** and npm.
+
+```sh
+git clone https://github.com/uzairdeveloper223/PadScope.git
+cd PadScope
+npm ci
+npm run dev
+```
+
+Open the local URL printed by Vite, normally **http://localhost:5173/**. No API keys, environment variables, or separate asset downloads are required.
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the development server |
+| `npm test` | Run the Node regression tests |
+| `npm run build` | Check TypeScript and produce `dist/` |
+| `npm run preview` | Serve an existing production build, normally on port 4173 |
+
+Use HTTPS or localhost for controller access. Opening `index.html` directly as a file does not run the application.
+
+### Project structure and checks
+
 ```text
 src/main.ts              Input selection, calibration, hardware tools, app wiring
 src/controller/          Gamepad/HID state, Sony report parsing, motion tracking
@@ -200,6 +211,14 @@ tests/                   Node regressions using real GLB assets and report data
 Run `npm test` and `npm run build` before contributing. The regression suite covers real-model orientation/hit detection/framing, gyro rest and axis behavior, report decoding/output checksums, grip rotation, trigger edges, settings, round scoring, and guided-check measurements/continuity/report storage. See [range and inspection implementation notes](src/game/README.md) and [controller check methodology](docs/HEALTH_CHECK.md).
 
 Browser rendering, audio playback quality, and physical controller feel are manual checks. Test both themes, narrow/desktop layouts, centering and rotation on all three axes, freeze/resume, input loss, remapping, and asset loading under the deployment path. When reporting an issue, include browser/OS, USB or Bluetooth, device IDs, and reproduction steps. PadScope's JSON export can help explain the current readings.
+
+## Contributing and feedback
+
+Bug fixes, documentation improvements, accessibility work, and controller compatibility reports are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, verification, and asset attribution requirements.
+
+- [Report a bug](https://github.com/uzairdeveloper223/PadScope/issues/new?template=bug_report.yml)
+- [Share a controller compatibility result](https://github.com/uzairdeveloper223/PadScope/issues/new?template=controller_compatibility.yml)
+- [Suggest a feature](https://github.com/uzairdeveloper223/PadScope/issues/new?template=feature_request.yml)
 
 ## GitHub Pages
 
